@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ระบบจองคิวคลินิกออนไลน์</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    margin:0;
+    background:#f0f8ff;
+}
+
+header{
+    background:#2196F3;
+    color:white;
+    text-align:center;
+    padding:25px;
+}
+
+.container{
+    max-width:600px;
+    margin:30px auto;
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+h2{
+    text-align:center;
+    color:#333;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border:1px solid #ccc;
+    border-radius:8px;
+    font-size:16px;
+}
+
+textarea{
+    resize:none;
+}
+
+button{
+    width:100%;
+    padding:14px;
+    background:#4CAF50;
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-size:16px;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+button:hover{
+    opacity:0.9;
+}
+
+.admin-btn{
+    background:#FF9800;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🏥 ระบบจองคิวคลินิกออนไลน์</h1>
+    <p>คลินิกรักษาโรคทั่วไป</p>
+</header>
+
+<div class="container">
+
+<h2>แบบฟอร์มจองคิว</h2>
+
+<input id="name" placeholder="ชื่อ-นามสกุล">
+
+<input id="phone" placeholder="เบอร์โทรศัพท์">
+
+<input id="email" placeholder="อีเมล">
+
+<textarea
+id="symptom"
+rows="4"
+placeholder="อาการหรือสาเหตุที่มาพบแพทย์ เช่น ไข้ ไอ เจ็บคอ ปวดท้อง">
+</textarea>
+
+<input type="date" id="date">
+
+<select id="time">
+<option value="">-- เลือกเวลา --</option>
+<option>09:00</option>
+<option>10:00</option>
+<option>11:00</option>
+<option>12:00</option>
+<option>13:00</option>
+<option>14:00</option>
+<option>15:00</option>
+<option>16:00</option>
+<option>17:00</option>
+<option>18:00</option>
+<option>19:00</option>
+<option>20:00</option>
+</select>
+
+<button onclick="bookQueue()">
+จองคิว
+</button>
+
+<a href="admin-login.html">
+    <button type="button" class="admin-btn">
+        สำหรับเจ้าหน้าที่
+    </button>
+</a>
+
+</div>
+
+<script>
+
+// เปลี่ยนเป็น URL Apps Script ของคุณ
+const API_URL =
+"https://script.google.com/macros/s/AKfycbyLRReouqfrzVP4jBairrve1bKeulOiPmn1CHGkiBSB1E-Jd97DiUsHPTDZ-GOfDK2_pw/exec";
+
+async function bookQueue(){
+
+    const name =
+        document.getElementById("name").value.trim();
+
+    const phone =
+        document.getElementById("phone").value.trim();
+
+    const email =
+        document.getElementById("email").value.trim();
+
+    const symptom =
+        document.getElementById("symptom").value.trim();
+
+    const date =
+        document.getElementById("date").value;
+
+    const time =
+        document.getElementById("time").value;
+
+    if(!name || !phone || !symptom || !date || !time){
+
+        alert("กรุณากรอกข้อมูลให้ครบ");
+
+        return;
+
+    }
+
+    const data = {
+
+        action:"addBooking",
+
+        name:name,
+        phone:phone,
+        email:email,
+        symptom:symptom,
+        date:date,
+        time:time
+
+    };
+
+    try{
+
+        const response = await fetch(API_URL,{
+
+            method:"POST",
+
+            body:JSON.stringify(data)
+
+        });
+
+        const result = await response.json();
+
+        if(result.success){
+
+            alert("จองคิวสำเร็จ");
+
+            document.getElementById("name").value="";
+            document.getElementById("phone").value="";
+            document.getElementById("email").value="";
+            document.getElementById("symptom").value="";
+            document.getElementById("date").value="";
+            document.getElementById("time").selectedIndex=0;
+
+        }else{
+
+            alert("เกิดข้อผิดพลาด");
+
+        }
+
+    }catch(error){
+
+        console.log(error);
+
+        alert("ไม่สามารถเชื่อมต่อระบบได้");
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
