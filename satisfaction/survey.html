@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>แบบประเมินความพึงพอใจ</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>📋 แบบประเมินความพึงพอใจ</h1>
+
+<p>กรุณาประเมินการใช้งานระบบจองคิวคลินิก</p>
+
+<input
+id="name"
+type="text"
+placeholder="ชื่อ-นามสกุล (ไม่บังคับ)">
+
+<label>1. ความสะดวกในการใช้งาน</label>
+
+<select id="q1">
+<option value="5">⭐⭐⭐⭐⭐ ดีมาก</option>
+<option value="4">⭐⭐⭐⭐ ดี</option>
+<option value="3">⭐⭐⭐ ปานกลาง</option>
+<option value="2">⭐⭐ พอใช้</option>
+<option value="1">⭐ ควรปรับปรุง</option>
+</select>
+
+<label>2. ความรวดเร็วของระบบ</label>
+
+<select id="q2">
+<option value="5">⭐⭐⭐⭐⭐ ดีมาก</option>
+<option value="4">⭐⭐⭐⭐ ดี</option>
+<option value="3">⭐⭐⭐ ปานกลาง</option>
+<option value="2">⭐⭐ พอใช้</option>
+<option value="1">⭐ ควรปรับปรุง</option>
+</select>
+
+<label>3. ความพึงพอใจโดยรวม</label>
+
+<select id="q3">
+<option value="5">⭐⭐⭐⭐⭐ ดีมาก</option>
+<option value="4">⭐⭐⭐⭐ ดี</option>
+<option value="3">⭐⭐⭐ ปานกลาง</option>
+<option value="2">⭐⭐ พอใช้</option>
+<option value="1">⭐ ควรปรับปรุง</option>
+</select>
+
+<textarea
+id="comment"
+rows="5"
+placeholder="ข้อเสนอแนะเพิ่มเติม"></textarea>
+
+<button onclick="sendSurvey()">
+ส่งแบบประเมิน
+</button>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
