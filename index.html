@@ -7,72 +7,168 @@
 
 <style>
 
-*{
-    box-sizing:border-box;
-    font-family:Arial,sans-serif;
-}
-
 body{
     margin:0;
-    background:#f0f8ff;
+    background:#F4F9FF;
 }
 
+/* ส่วนหัว */
 header{
-    background:#2196F3;
-    color:white;
+    background:linear-gradient(135deg,#1565C0,#42A5F5);
     text-align:center;
-    padding:25px;
+    padding:35px 20px;
 }
 
+header h1{
+    margin:0;
+    font-size:42px;
+    color:#FFFFFF;
+    font-weight:700;
+}
+
+header p{
+    margin-top:10px;
+    font-size:20px;
+    color:#E3F2FD;
+}
+
+/* กล่องฟอร์ม */
 .container{
-    max-width:600px;
-    margin:30px auto;
-    background:white;
-    padding:30px;
-    border-radius:15px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+    max-width:650px;
+    margin:35px auto;
+    background:#FFFFFF;
+    padding:35px;
+    border-radius:16px;
+    box-shadow:0 8px 18px rgba(0,0,0,.08);
 }
 
 h2{
+    color:#1565C0;
     text-align:center;
-    color:#333;
+    font-size:30px;
+}
+
+/* ช่องกรอกข้อมูล */
+input,
+select,
+textarea{
+    width:100%;
+    padding:14px;
+    margin:12px 0;
+    border:1.5px solid #BBDEFB;
+    border-radius:10px;
+    font-size:16px;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:#1565C0;
+    outline:none;
+}
+
+/* ปุ่มจอง */
+button{
+    width:100%;
+    padding:15px;
+    background:#43A047;
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#2E7D32;
+}
+
+/* ปุ่มเจ้าหน้าที่ */
+.admin-btn{
+    background:#FB8C00;
+}
+
+.admin-btn:hover{
+    background:#F57C00;
+}body{
+    margin:0;
+    background:#F5F9FC;
+    font-family:'Segoe UI',sans-serif;
+}
+
+header{
+    background:linear-gradient(90deg,#0D47A1,#1976D2);
+    padding:45px 20px;
+    text-align:center;
+    box-shadow:0 4px 15px rgba(0,0,0,.15);
+}
+
+header h1{
+    color:#FFFFFF;
+    font-size:46px;
+    margin:0;
+    font-weight:700;
+}
+
+header p{
+    color:#E3F2FD;
+    font-size:22px;
+    margin-top:10px;
+}
+
+.container{
+    background:#FFFFFF;
+    border-radius:18px;
+    padding:35px;
+    margin:40px auto;
+    max-width:700px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+h2{
+    color:#0D47A1;
+    text-align:center;
 }
 
 input,
 select,
 textarea{
-    width:100%;
-    padding:12px;
-    margin:10px 0;
-    border:1px solid #ccc;
-    border-radius:8px;
+    border:1px solid #CFD8DC;
+    border-radius:10px;
+    padding:14px;
     font-size:16px;
 }
 
-textarea{
-    resize:none;
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:#1976D2;
+    box-shadow:0 0 8px rgba(25,118,210,.2);
+    outline:none;
 }
 
 button{
-    width:100%;
-    padding:14px;
-    background:#4CAF50;
+    background:#26A69A;
     color:white;
+    font-size:18px;
+    font-weight:bold;
     border:none;
-    border-radius:8px;
-    font-size:16px;
-    cursor:pointer;
-    margin-top:10px;
+    border-radius:10px;
+    padding:15px;
 }
 
 button:hover{
-    opacity:0.9;
+    background:#00897B;
 }
 
 .admin-btn{
-    background:#FF9800;
+    background:#546E7A;
 }
 
+.admin-btn:hover{
+    background:#37474F;
+}
 </style>
 </head>
 
@@ -134,6 +230,7 @@ placeholder="อาการหรือสาเหตุที่มาพบ�
 // เปลี่ยนเป็น URL Apps Script ของคุณ
 const API_URL =
 "https://script.google.com/macros/s/AKfycbw4N-c8P6tyoflEQ-O62G-G3mnskkmMW-BiZNkkt-LuVpwwznLkDtd3pahgME6FKCl2/exec";
+
 async function bookQueue(){
 
     const name =
@@ -175,42 +272,42 @@ async function bookQueue(){
 
     };
 
-    try{
+    try {
 
-        const response = await fetch(API_URL,{
+    const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    });
 
-            method:"POST",
+    const result = await response.json();
 
-            body:JSON.stringify(data)
+    if (result.success) {
 
-        });
+        alert("จองคิวสำเร็จ");
 
-        const result = await response.json();
+        document.getElementById("name").value = "";
+        document.getElementById("phone").value = "";
+        document.getElementById("email").value = "";
+        document.getElementById("symptom").value = "";
+        document.getElementById("date").value = "";
+        document.getElementById("time").selectedIndex = 0;
 
-        if(result.success){
+    } else {
 
-            alert("จองคิวสำเร็จ");
-
-            document.getElementById("name").value="";
-            document.getElementById("phone").value="";
-            document.getElementById("email").value="";
-            document.getElementById("symptom").value="";
-            document.getElementById("date").value="";
-            document.getElementById("time").selectedIndex=0;
-
-        }else{
-
-            alert("เกิดข้อผิดพลาด");
-
-        }
-
-    }catch(error){
-
-        console.log(error);
-
-        alert("ไม่สามารถเชื่อมต่อระบบได้");
+        alert(result.message || "เกิดข้อผิดพลาด");
 
     }
+
+} catch (error) {
+
+    console.error(error);
+
+    alert("ไม่สามารถเชื่อมต่อระบบได้");
+
+}
 
 }
 
