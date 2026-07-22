@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>แบบประเมินความพึงพอใจ</title>
+
+<style>
+
+body{
+    margin:0;
+    background:#F4F9FF;
+    font-family:Arial,sans-serif;
+}
+
+.container{
+    max-width:650px;
+    margin:40px auto;
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+
+h1{
+    text-align:center;
+    color:#1565C0;
+}
+
+label{
+    display:block;
+    margin-top:18px;
+    font-weight:bold;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    padding:12px;
+    margin-top:8px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    box-sizing:border-box;
+}
+
+button{
+    width:100%;
+    margin-top:25px;
+    padding:15px;
+    background:#43A047;
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>⭐ แบบประเมินความพึงพอใจ</h1>
+
+<label>ชื่อ-นามสกุล</label>
+<input id="name" placeholder="กรอกชื่อ-นามสกุล">
+
+<label>เลขคิว</label>
+<input id="queue" placeholder="เช่น A001">
+
+<label>ความพึงพอใจโดยรวม</label>
+<select id="overall">
+<option value="">-- เลือกคะแนน --</option>
+<option value="5">⭐⭐⭐⭐⭐ ดีมาก</option>
+<option value="4">⭐⭐⭐⭐ ดี</option>
+<option value="3">⭐⭐⭐ ปานกลาง</option>
+<option value="2">⭐⭐ พอใช้</option>
+<option value="1">⭐ ควรปรับปรุง</option>
+</select>
+
+<label>ความสะดวกในการจองคิว</label>
+<select id="service">
+<option value="">-- เลือกคะแนน --</option>
+<option value="5">5 - ดีมาก</option>
+<option value="4">4 - ดี</option>
+<option value="3">3 - ปานกลาง</option>
+<option value="2">2 - พอใช้</option>
+<option value="1">1 - ควรปรับปรุง</option>
+</select>
+
+<label>การให้บริการของเจ้าหน้าที่</label>
+<select id="staff">
+<option value="">-- เลือกคะแนน --</option>
+<option value="5">5 - ดีมาก</option>
+<option value="4">4 - ดี</option>
+<option value="3">3 - ปานกลาง</option>
+<option value="2">2 - พอใช้</option>
+<option value="1">1 - ควรปรับปรุง</option>
+</select>
+
+<label>ความสะอาดของคลินิก</label>
+<select id="cleanliness">
+<option value="">-- เลือกคะแนน --</option>
+<option value="5">5 - ดีมาก</option>
+<option value="4">4 - ดี</option>
+<option value="3">3 - ปานกลาง</option>
+<option value="2">2 - พอใช้</option>
+<option value="1">1 - ควรปรับปรุง</option>
+</select>
+
+<label>ความคิดเห็นเพิ่มเติม</label>
+<textarea id="comment" rows="4"></textarea>
+
+<button onclick="submitSatisfaction()">
+ส่งแบบประเมิน
+</button>
+
+</div>
+
+<script>
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbw4N-c8P6tyoflEQ-O62G-G3mnskkmMW-BiZNkkt-LuVpwwznLkDtd3pahgME6FKCl2/exec";
+
+async function submitSatisfaction(){
+
+    const data = {
+
+        action:"addSatisfaction",
+
+        name:document.getElementById("name").value,
+
+        queue:document.getElementById("queue").value,
+
+        overall:document.getElementById("overall").value,
+
+        service:document.getElementById("service").value,
+
+        staff:document.getElementById("staff").value,
+
+        cleanliness:document.getElementById("cleanliness").value,
+
+        comment:document.getElementById("comment").value
+
+    };
+
+    if(
+        !data.name ||
+        !data.queue ||
+        !data.overall ||
+        !data.service ||
+        !data.staff ||
+        !data.cleanliness
+    ){
+
+        alert("กรุณากรอกข้อมูลให้ครบ");
+
+        return;
+
+    }
+
+    try{
+
+        const response = await fetch(API_URL,{
+
+            method:"POST",
+
+            body:JSON.stringify(data)
+
+        });
+
+        const result = await response.json();
+
+        if(result.success){
+
+            alert("ส่งแบบประเมินสำเร็จ");
+
+            location.reload();
+
+        }else{
+
+            alert(result.message);
+
+        }
+
+    }catch(error){
+
+        alert("ไม่สามารถเชื่อมต่อระบบได้");
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
