@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ระบบจัดการคิวผู้ป่วย - เจ้าหน้าที่</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+body {
+    background: #f4f6f9;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+header {
+    background: linear-gradient(135deg, #0D47A1, #1976D2);
+    color: white;
+    padding: 25px 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.card {
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    border: none;
+}
+
+.queue-number {
+    font-size: 20px;
+    font-weight: bold;
+    color: #0d6efd;
+}
+
+.status-badge {
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+</style>
+</head>
+<body>
+
+<header class="mb-4">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="h3 mb-0">🏥 ระบบจัดการคิวผู้ป่วย</h1>
+            <small class="text-white-50">สำหรับเจ้าหน้าที่คลินิก</small>
+        </div>
+        <div>
+            <!-- ปุ่มสลับไปหน้าดูผลประเมิน -->
+            <a href="dashboard.html" class="btn btn-outline-light me-2">
+                📊 ดูผลประเมิน
+            </a>
+            <button onclick="logout()" class="btn btn-danger">
+                🚪 ออกจากระบบ
+            </button>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="text-primary m-0">📅 รายการคิวผู้ป่วยทั้งหมด</h4>
+        <button onclick="loadBookings()" class="btn btn-success">
+            🔄 รีเฟรชข้อมูล
+        </button>
+    </div>
+
+    <div class="card p-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-primary text-center">
+                    <tr>
+                        <th>เลขคิว</th>
+                        <th>ชื่อ-นามสกุล</th>
+                        <th>เบอร์โทรศัพท์</th>
+                        <th>อาการ</th>
+                        <th>วันที่</th>
+                        <th>เวลา</th>
+                        <th>สถานะ</th>
+                        <th>จัดการคิว</th>
+                    </tr>
+                </thead>
+                <tbody id="bookingTableBody" class="text-center">
+                    <tr>
+                        <td colspan="8" class="py-4 text-muted">กำลังโหลดข้อมูลคิว...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+/* =========================
+   1. ตรวจสอบการเข้าสู่ระบบ
+========================= */
+if (sessionStorage.getItem("adminLogin") !== "true") {
+    window.location.href = "admin-login.html";
+}
+
+/* =========================
+   2. URL Google Apps Script
+========================= */
+const API_URL = "https://script.google.com/macros/s/AKfycbw4N-c8P6tyoflEQ-O62G-G3mnskkmMW-BiZNkkt-LuVpwwznLkDtd3pahgME6FKCl2/exec";
+
+/* =========================
+   3. โหลดข้อมูลรายการคิว
+========================= */
+async function loadBookings() {
+    const tbody = document.getElementById("bookingTableBody");
+    try {
+        const response = await fetch(API_URL + "?action=getBookings");
+        const data = await response.json();
+        
+        tbody.innerHTML = "";
+
+        if (!data || data.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="8" class="py-4 text-muted">ยังไม่มีรายการคิวในขณะนี้</td>
+                </tr>
+            `;
+            return;
+        }
+
+        data.forEach(item => {
+            let badgeClass = "bg-warning text-dark";
+            let statusText = item.status || "รอเรียก";
+
+            if (item.status === "กำลังตรวจ") {
+                badgeClass = "bg-info text-dark";
+            } else if (item.status === "เสร็จสิ้น") {
+                badgeClass = "bg-success";
+            }
+
+            tbody.innerHTML += `
+                <tr>
+                    <td class="queue-number">${item.queue || "-"}</td>
+                    <td class="fw-bold text-start">${item.name || "-"}</td>
+                    <td>${item.phone || "-"}</td>
+                    <td class="text-start">${item.symptom || "-"}</td>
+                    <td>${item.date || "-"}</td>
+                    <td>${item.time || "-"} น.</td>
+                    <td>
+                        <span class="badge ${badgeClass} status-badge">${statusText}</span>
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button class="btn btn-info text-white" onclick="updateStatus('${item.id}', 'กำลังตรวจ')">
+                                🩺 ตรวจ
+                            </button>
+                            <button class="btn btn-success" onclick="updateStatus('${item.id}', 'เสร็จสิ้น')">
+                                ✅ เสร็จ
+                            </button>
+                            <button class="btn btn-danger" onclick="deleteBooking('${item.id}')">
+                                🗑️ ลบ
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+
+    } catch (error) {
+        console.error(error);
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="8" class="py-4 text-danger">ไม่สามารถโหลดข้อมูลคิวได้ กรุณาตรวจสอบการเชื่อมต่อ</td>
+            </tr>
+        `;
+    }
+}
+
+/* =========================
+   4. อัปเดตสถานะคิว
+========================= */
+async function updateStatus(id, status) {
+    try {
+        await fetch(API_URL, {
+            method: "POST",
+            body: JSON.stringify({
+                action: "updateStatus",
+                id: id,
+                status: status
+            })
+        });
+        loadBookings();
+    } catch (error) {
+        console.error(error);
+        alert("ไม่สามารถอัปเดตสถานะได้");
+    }
+}
+
+/* =========================
+   5. ลบคิว
+========================= */
+async function deleteBooking(id) {
+    if (!confirm("คุณต้องการลบคิวนี้ใช่หรือไม่?")) {
+        return;
+    }
+
+    try {
+        await fetch(API_URL, {
+            method: "POST",
+            body: JSON.stringify({
+                action: "deleteBooking",
+                id: id
+            })
+        });
+        loadBookings();
+    } catch (error) {
+        console.error(error);
+        alert("ไม่สามารถลบคิวได้");
+    }
+}
+
+/* =========================
+   6. ออกจากระบบ
+========================= */
+function logout() {
+    sessionStorage.removeItem("adminLogin");
+    window.location.href = "admin-login.html";
+}
+
+loadBookings();
+setInterval(loadBookings, 10000);
+</script>
+
+</body>
+</html>
