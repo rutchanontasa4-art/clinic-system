@@ -113,7 +113,7 @@
               <td>${item.symptom || '-'}</td>
               <td>${item.date || '-'}</td>
               <td>${item.time || '-'}</td>
-              <td><span class="badge ${badgeColor}">${item.status || 'รออนุมัติ'}</span></td>
+              <td><span class="badge ${badgeColor}">${item.status || 'รอคิว'}</span></td>
               <td>
                 <button class="btn btn-sm btn-info text-white me-1" onclick="updateStatus('${item.id}', 'กำลังตรวจ')">ตรวจ</button>
                 <button class="btn btn-sm btn-success me-1" onclick="updateStatus('${item.id}', 'เสร็จสิ้น')">เสร็จ</button>
