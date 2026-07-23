@@ -1,218 +1,857 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
   <title>Dashboard เจ้าหน้าที่ - ระบบคลินิก</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet">
+
   <style>
+
     body {
       background-color: #f8f9fa;
       font-family: 'Sarabun', sans-serif;
     }
+
     .card {
       border-radius: 12px;
       box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     }
+
   </style>
+
 </head>
+
+
 <body>
 
+
   <div class="container my-5">
+
+
     <div class="d-flex justify-content-between align-items-center mb-4">
+
       <h2>🏥 Dashboard เจ้าหน้าที่</h2>
-      <button onclick="loadAllData()" class="btn btn-outline-primary btn-sm">🔄 รีเฟรชข้อมูล</button>
+
+      <button
+        onclick="loadAllData()"
+        class="btn btn-outline-primary btn-sm">
+
+        🔄 รีเฟรชข้อมูล
+
+      </button>
+
     </div>
 
-    <!-- ส่วนที่ 1: ตารางรายการจองคิว -->
+
+
+    <!-- =========================
+         ตารางรายการจองคิว
+    ========================== -->
+
     <div class="card p-4 mb-5">
-      <h4 class="mb-3 text-primary">📅 รายการจองคิวผู้ป่วย</h4>
+
+      <h4 class="mb-3 text-primary">
+
+        📅 รายการจองคิวผู้ป่วย
+
+      </h4>
+
+
       <div class="table-responsive">
+
         <table class="table table-hover align-middle">
+
+
           <thead class="table-primary">
+
             <tr>
+
               <th>เลขคิว</th>
+
               <th>ชื่อ-นามสกุล</th>
+
               <th>เบอร์โทร</th>
+
               <th>อาการ</th>
+
               <th>วันที่</th>
+
               <th>เวลา</th>
+
               <th>สถานะ</th>
+
               <th>จัดการ</th>
+
             </tr>
+
           </thead>
+
+
           <tbody id="bookingTableBody">
-            <tr><td colspan="8" class="text-center">กำลังโหลดข้อมูล...</td></tr>
+
+            <tr>
+
+              <td
+                colspan="8"
+                class="text-center">
+
+                กำลังโหลดข้อมูล...
+
+              </td>
+
+            </tr>
+
           </tbody>
+
+
         </table>
+
       </div>
+
     </div>
 
-    <!-- ส่วนที่ 2: ตารางประเมินความพึงพอใจ -->
+
+
+    <!-- =========================
+         ตารางความพึงพอใจ
+    ========================== -->
+
     <div class="card p-4">
-      <h4 class="mb-3 text-success">⭐ ผลการประเมินความพึงพอใจ</h4>
+
+      <h4 class="mb-3 text-success">
+
+        ⭐ ผลการประเมินความพึงพอใจ
+
+      </h4>
+
+
       <div class="table-responsive">
+
         <table class="table table-hover align-middle">
+
+
           <thead class="table-success">
+
             <tr>
+
               <th>ชื่อ-นามสกุล</th>
+
               <th>เลขคิว</th>
+
               <th>โดยรวม</th>
+
               <th>การบริการ</th>
+
               <th>เจ้าหน้าที่</th>
+
               <th>ความสะอาด</th>
+
               <th>ข้อเสนอแนะ</th>
+
+              <th>จัดการ</th>
+
             </tr>
+
           </thead>
+
+
           <tbody id="satisfactionTableBody">
-            <tr><td colspan="7" class="text-center">กำลังโหลดข้อมูล...</td></tr>
+
+            <tr>
+
+              <td
+                colspan="8"
+                class="text-center">
+
+                กำลังโหลดข้อมูล...
+
+              </td>
+
+            </tr>
+
           </tbody>
+
+
         </table>
+
       </div>
+
     </div>
+
+
   </div>
 
-  <script>
-    // URL ของ Web App จาก Google Apps Script (ตรวจสอบให้ตรงกับของคุณ)
-    const API_URL = "https://script.google.com/macros/s/AKfycbw4N-c8P6tyoflEQ-O62G-G3mnskkmMW-BiZNkkt-LuVpwwznLkDtd3pahgME6FKCl2/exec";
 
-    // โหลดข้อมูลทั้งหมดเมื่อเปิดหน้า
+
+  <script>
+
+
+    /* =========================
+       URL Google Apps Script
+    ========================== */
+
+    const API_URL =
+      "https://script.google.com/macros/s/AKfycbw4N-c8P6tyoflEQ-O62G-G3mnskkmMW-BiZNkkt-LuVpwwznLkDtd3pahgME6FKCl2/exec";
+
+
+
+    /* =========================
+       โหลดข้อมูลทั้งหมด
+    ========================== */
+
     window.onload = function() {
+
       loadAllData();
+
     };
 
+
     function loadAllData() {
+
       loadBookings();
+
       loadSatisfaction();
+
     }
 
-    // 1. ดึงข้อมูลการจองคิว
+
+
+    /* =========================
+       โหลดข้อมูลการจอง
+    ========================== */
+
     async function loadBookings() {
-      const tbody = document.getElementById("bookingTableBody");
+
+
+      const tbody =
+        document.getElementById(
+          "bookingTableBody"
+        );
+
+
       try {
-        const res = await fetch(`${API_URL}?action=getBookings`);
-        const data = await res.json();
-        
+
+
+        const res =
+          await fetch(
+            API_URL +
+            "?action=getBookings"
+          );
+
+
+        const data =
+          await res.json();
+
+
         tbody.innerHTML = "";
-        if (!data || data.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="8" class="text-center">ไม่มีข้อมูลการจอง</td></tr>`;
+
+
+        if (
+          !data ||
+          data.length === 0
+        ) {
+
+
+          tbody.innerHTML = `
+
+            <tr>
+
+              <td
+                colspan="8"
+                class="text-center">
+
+                ไม่มีข้อมูลการจอง
+
+              </td>
+
+            </tr>
+
+          `;
+
+
           return;
+
         }
+
 
         data.forEach(item => {
-          let badgeColor = "bg-warning text-dark";
-          if (item.status === "กำลังตรวจ") badgeColor = "bg-info text-dark";
-          if (item.status === "เสร็จสิ้น") badgeColor = "bg-success";
+
+
+          let badgeColor =
+            "bg-warning text-dark";
+
+
+          if (
+            item.status ===
+            "กำลังตรวจ"
+          ) {
+
+            badgeColor =
+              "bg-info text-dark";
+
+          }
+
+
+          if (
+            item.status ===
+            "เสร็จสิ้น"
+          ) {
+
+            badgeColor =
+              "bg-success";
+
+          }
+
 
           tbody.innerHTML += `
+
             <tr>
-              <td><strong>${item.queue || '-'}</strong></td>
-              <td>${item.name || '-'}</td>
-              <td>${item.phone || '-'}</td>
-              <td>${item.symptom || '-'}</td>
-              <td>${item.date || '-'}</td>
-              <td>${item.time || '-'}</td>
-              <td><span class="badge ${badgeColor}">${item.status || 'รอคิว'}</span></td>
+
               <td>
-                <button class="btn btn-sm btn-info text-white me-1" onclick="updateStatus('${item.id}', 'กำลังตรวจ')">ตรวจ</button>
-                <button class="btn btn-sm btn-success me-1" onclick="updateStatus('${item.id}', 'เสร็จสิ้น')">เสร็จ</button>
-                <button class="btn btn-sm btn-danger" onclick="deleteBooking('${item.id}')">ลบ</button>
+
+                <strong>
+
+                  ${item.queue || '-'}
+
+                </strong>
+
               </td>
+
+
+              <td>
+
+                ${item.name || '-'}
+
+              </td>
+
+
+              <td>
+
+                ${item.phone || '-'}
+
+              </td>
+
+
+              <td>
+
+                ${item.symptom || '-'}
+
+              </td>
+
+
+              <td>
+
+                ${item.date || '-'}
+
+              </td>
+
+
+              <td>
+
+                ${item.time || '-'}
+
+              </td>
+
+
+              <td>
+
+                <span
+                  class="badge ${badgeColor}">
+
+                  ${item.status || 'รอคิว'}
+
+                </span>
+
+              </td>
+
+
+              <td>
+
+
+                <button
+
+                  class="btn btn-sm btn-info text-white me-1"
+
+                  onclick="
+
+                    updateStatus(
+
+                      '${item.id}',
+
+                      'กำลังตรวจ'
+
+                    )
+
+                  ">
+
+                  ตรวจ
+
+                </button>
+
+
+                <button
+
+                  class="btn btn-sm btn-success me-1"
+
+                  onclick="
+
+                    updateStatus(
+
+                      '${item.id}',
+
+                      'เสร็จสิ้น'
+
+                    )
+
+                  ">
+
+                  เสร็จ
+
+                </button>
+
+
+                <button
+
+                  class="btn btn-sm btn-danger"
+
+                  onclick="
+
+                    deleteBooking(
+
+                      '${item.id}'
+
+                    )
+
+                  ">
+
+                  ลบ
+
+                </button>
+
+
+              </td>
+
+
             </tr>
+
           `;
+
+
         });
-      } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="8" class="text-center text-danger">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
+
+
+      } catch (error) {
+
+
+        tbody.innerHTML = `
+
+          <tr>
+
+            <td
+              colspan="8"
+              class="text-center text-danger">
+
+              เกิดข้อผิดพลาดในการดึงข้อมูล
+
+            </td>
+
+          </tr>
+
+        `;
+
+
       }
+
     }
 
-    // 2. ดึงข้อมูลความพึงพอใจ
+
+
+    /* =========================
+       โหลดข้อมูลความพึงพอใจ
+    ========================== */
+
     async function loadSatisfaction() {
-      const tbody = document.getElementById("satisfactionTableBody");
+
+
+      const tbody =
+        document.getElementById(
+          "satisfactionTableBody"
+        );
+
+
       try {
-        const res = await fetch(`${API_URL}?action=getSatisfaction`);
-        const data = await res.json();
+
+
+        const res =
+          await fetch(
+
+            API_URL +
+            "?action=getSatisfaction"
+
+          );
+
+
+        const data =
+          await res.json();
+
 
         tbody.innerHTML = "";
-        if (!data || data.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="7" class="text-center">ยังไม่มีข้อมูลการประเมิน</td></tr>`;
+
+
+        if (
+          !data ||
+          data.length === 0
+        ) {
+
+
+          tbody.innerHTML = `
+
+            <tr>
+
+              <td
+                colspan="8"
+                class="text-center">
+
+                ยังไม่มีข้อมูลการประเมิน
+
+              </td>
+
+            </tr>
+
+          `;
+
+
           return;
+
         }
 
-  data.forEach(item => {
 
-  tbody.innerHTML += `
+        data.forEach(item => {
 
-    <tr>
 
-      <td>${item.name || '-'}</td>
+          tbody.innerHTML += `
 
-      <td>
-        <span class="badge bg-secondary">
-          ${item.queue || '-'}
-        </span>
-      </td>
+            <tr>
 
-      <td>${item.overall || '-'}</td>
 
-      <td>${item.service || '-'}</td>
+              <td>
 
-      <td>${item.staff || '-'}</td>
+                ${item.name || '-'}
 
-      <td>${item.cleanliness || '-'}</td>
+              </td>
 
-      <td>${item.comment || '-'}</td>
 
-      <td>
-        <button
-          class="btn btn-sm btn-danger"
-          onclick="deleteSatisfaction('${item.id}')">
+              <td>
 
-          ลบ
+                <span
+                  class="badge bg-secondary">
 
-        </button>
-      </td>
+                  ${item.queue || '-'}
 
-    </tr>
+                </span>
 
-  `;
+              </td>
 
-});
-      } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
+
+              <td>
+
+                ${item.overall || '-'}
+
+              </td>
+
+
+              <td>
+
+                ${item.service || '-'}
+
+              </td>
+
+
+              <td>
+
+                ${item.staff || '-'}
+
+              </td>
+
+
+              <td>
+
+                ${item.cleanliness || '-'}
+
+              </td>
+
+
+              <td>
+
+                ${item.comment || '-'}
+
+              </td>
+
+
+              <!-- ปุ่มลบเฉพาะความพึงพอใจ -->
+
+              <td>
+
+
+                <button
+
+                  class="btn btn-sm btn-danger"
+
+                  onclick="
+
+                    deleteSatisfaction(
+
+                      '${item.id}'
+
+                    )
+
+                  ">
+
+                  🗑️ ลบ
+
+                </button>
+
+
+              </td>
+
+
+            </tr>
+
+          `;
+
+
+        });
+
+
+      } catch (error) {
+
+
+        tbody.innerHTML = `
+
+          <tr>
+
+            <td
+              colspan="8"
+              class="text-center text-danger">
+
+              เกิดข้อผิดพลาดในการดึงข้อมูล
+
+            </td>
+
+          </tr>
+
+        `;
+
+
       }
+
     }
 
-    // เปลี่ยนสถานะคิว
-    async function updateStatus(id, status) {
-      await fetch(API_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "updateStatus", id: id, status: status })
-      });
+
+
+    /* =========================
+       เปลี่ยนสถานะคิว
+    ========================== */
+
+    async function updateStatus(
+      id,
+      status
+    ) {
+
+
+      await fetch(
+
+        API_URL,
+
+        {
+
+          method: "POST",
+
+          body: JSON.stringify({
+
+            action:
+              "updateStatus",
+
+            id:
+              id,
+
+            status:
+              status
+
+          })
+
+        }
+
+      );
+
+
       loadBookings();
+
     }
 
-    // ลบคิว
+
+
+    /* =========================
+       ลบคิว
+    ========================== */
+
+    async function deleteBooking(id) {
+
+
+      if (
+
+        !confirm(
+
+          "คุณต้องการลบคิวนี้ใช่หรือไม่?"
+
+        )
+
+      ) {
+
+        return;
+
+      }
+
+
+      await fetch(
+
+        API_URL,
+
+        {
+
+          method: "POST",
+
+          body: JSON.stringify({
+
+            action:
+              "deleteBooking",
+
+            id:
+              id
+
+          })
+
+        }
+
+      );
+
+
+      loadBookings();
+
+    }
+
+
+
+    /* =========================
+       ลบเฉพาะความพึงพอใจ
+    ========================== */
+
     async function deleteSatisfaction(id) {
 
-    if (!confirm("คุณต้องการลบแบบประเมินนี้ใช่หรือไม่?")) {
+
+      if (
+
+        !confirm(
+
+          "คุณต้องการลบแบบประเมินนี้ใช่หรือไม่?"
+
+        )
+
+      ) {
+
         return;
+
+      }
+
+
+      try {
+
+
+        const response =
+          await fetch(
+
+            API_URL,
+
+            {
+
+              method:
+                "POST",
+
+              body:
+                JSON.stringify({
+
+                  action:
+                    "deleteSatisfaction",
+
+                  id:
+                    id
+
+                })
+
+            }
+
+          );
+
+
+        const result =
+          await response.json();
+
+
+        if (
+          result.success
+        ) {
+
+
+          alert(
+
+            "ลบแบบประเมินสำเร็จ"
+
+          );
+
+
+          loadSatisfaction();
+
+
+        } else {
+
+
+          alert(
+
+            result.message
+
+          );
+
+
+        }
+
+
+      } catch (error) {
+
+
+        alert(
+
+          "ไม่สามารถลบแบบประเมินได้"
+
+        );
+
+
+      }
+
     }
 
-    await fetch(API_URL, {
-        method: "POST",
-        body: JSON.stringify({
-            action: "deleteSatisfaction",
-            id: id
-        })
-    });
 
-    alert("ลบแบบประเมินเรียบร้อยแล้ว");
-
-    loadSatisfaction();
-
-}
   </script>
+
+
 </body>
+
 </html>
