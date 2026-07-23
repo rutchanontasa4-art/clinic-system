@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ระบบจองคิวคลินิกออนไลน์</title>
+
+<style>
+
+body{
+    margin:0;
+    background:#F4F9FF;
+}
+
+/* ส่วนหัว */
+header{
+    background:linear-gradient(135deg,#1565C0,#42A5F5);
+    text-align:center;
+    padding:35px 20px;
+}
+
+header h1{
+    margin:0;
+    font-size:42px;
+    color:#FFFFFF;
+    font-weight:700;
+}
+
+header p{
+    margin-top:10px;
+    font-size:20px;
+    color:#E3F2FD;
+}
+
+/* กล่องฟอร์ม */
+.container{
+    max-width:650px;
+    margin:35px auto;
+    background:#FFFFFF;
+    padding:35px;
+    border-radius:16px;
+    box-shadow:0 8px 18px rgba(0,0,0,.08);
+}
+
+h2{
+    color:#1565C0;
+    text-align:center;
+    font-size:30px;
+}
+
+/* ช่องกรอกข้อมูล */
+input,
+select,
+textarea{
+    width:100%;
+    padding:14px;
+    margin:12px 0;
+    border:1.5px solid #BBDEFB;
+    border-radius:10px;
+    font-size:16px;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:#1565C0;
+    outline:none;
+}
+
+/* ปุ่มจอง */
+button{
+    width:100%;
+    padding:15px;
+    background:#43A047;
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#2E7D32;
+}
+
+/* ปุ่มเจ้าหน้าที่ */
+.admin-btn{
+    background:#FB8C00;
+}
+
+.admin-btn:hover{
+    background:#F57C00;
+}body{
+    margin:0;
+    background:#F5F9FC;
+    font-family:'Segoe UI',sans-serif;
+}
+
+header{
+    background:linear-gradient(90deg,#0D47A1,#1976D2);
+    padding:45px 20px;
+    text-align:center;
+    box-shadow:0 4px 15px rgba(0,0,0,.15);
+}
+
+header h1{
+    color:#FFFFFF;
+    font-size:46px;
+    margin:0;
+    font-weight:700;
+}
+
+header p{
+    color:#E3F2FD;
+    font-size:22px;
+    margin-top:10px;
+}
+
+.container{
+    background:#FFFFFF;
+    border-radius:18px;
+    padding:35px;
+    margin:40px auto;
+    max-width:700px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+h2{
+    color:#0D47A1;
+    text-align:center;
+}
+
+input,
+select,
+textarea{
+    border:1px solid #CFD8DC;
+    border-radius:10px;
+    padding:14px;
+    font-size:16px;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:#1976D2;
+    box-shadow:0 0 8px rgba(25,118,210,.2);
+    outline:none;
+}
+
+button{
+    background:#26A69A;
+    color:white;
+    font-size:18px;
+    font-weight:bold;
+    border:none;
+    border-radius:10px;
+    padding:15px;
+}
+
+button:hover{
+    background:#00897B;
+}
+
+.admin-btn{
+    background:#546E7A;
+}
+
+.admin-btn:hover{
+    background:#37474F;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🏥 ระบบจองคิวคลินิกออนไลน์</h1>
+    <p>คลินิกรักษาโรคทั่วไป</p>
+</header>
+
+<div class="container">
+
+<h2>แบบฟอร์มจองคิว</h2>
+
+<input id="name" placeholder="ชื่อ-นามสกุล">
+
+<input id="phone" placeholder="เบอร์โทรศัพท์">
+
+<input id="email" placeholder="อีเมล">
+
+<textarea
+id="symptom"
+rows="4"
+placeholder="อาการหรือสาเหตุที่มาพบแพทย์ เช่น ไข้ ไอ เจ็บคอ ปวดท้อง">
+</textarea>
+
+<input type="date" id="date">
+
+<select id="time">
+<option value="">-- เลือกเวลา --</option>
+<option>09:00</option>
+<option>10:00</option>
+<option>11:00</option>
+<option>12:00</option>
+<option>13:00</option>
+<option>14:00</option>
+<option>15:00</option>
+<option>16:00</option>
+<option>17:00</option>
+<option>18:00</option>
+<option>19:00</option>
+<option>20:00</option>
+</select>
+
+<button onclick="bookQueue()">
+จองคิว
+</button>
+
+<a href="admin-login.html">
+    <button type="button" class="admin-btn">
+        สำหรับเจ้าหน้าที่
+    </button>
+</a>
+
+</div>
+
+
+<!-- บัตรคิว -->
+<div id="queueCard" style="display:none;max-width:500px;margin:30px auto;background:#fff;padding:25px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,.2);text-align:center;">
+
+<h2>🏥 คลินิกรักษาโรคทั่วไป</h2>
+
+<h1 id="queueNumber" style="color:#2196F3;font-size:50px;"></h1>
+
+<p><b>ชื่อ :</b> <span id="cardName"></span></p>
+
+<p><b>วันที่ :</b> <span id="cardDate"></span></p>
+
+<p><b>เวลา :</b> <span id="cardTime"></span></p>
+
+<p><b>สถานะ :</b> รอรับการตรวจ</p>
+
+<hr>
+
+<button onclick="printQueue()">🖨 พิมพ์บัตรคิว</button>
+
+<button onclick="downloadPDF()">📄 ดาวน์โหลด PDF</button>
+
+</div>
+
+
+<script>
+
+// เปลี่ยนเป็น URL Apps Script ของคุณ
+const API_URL =
+"https://script.google.com/macros/s/AKfycbw4N-c8P6tyoflEQ-O62G-G3mnskkmMW-BiZNkkt-LuVpwwznLkDtd3pahgME6FKCl2/exec";
+async function bookQueue(){
+
+    const name =
+        document.getElementById("name").value.trim();
+
+    const phone =
+        document.getElementById("phone").value.trim();
+
+    const email =
+        document.getElementById("email").value.trim();
+
+    const symptom =
+        document.getElementById("symptom").value.trim();
+
+    const date =
+        document.getElementById("date").value;
+
+    const time =
+        document.getElementById("time").value;
+
+    if(!name || !phone || !symptom || !date || !time){
+
+        alert("กรุณากรอกข้อมูลให้ครบ");
+
+        return;
+
+    }
+
+    const data = {
+
+        action:"addBooking",
+
+        name:name,
+        phone:phone,
+        email:email,
+        symptom:symptom,
+        date:date,
+        time:time
+
+    };
+
+    try{
+
+        const response = await fetch(API_URL,{
+
+            method:"POST",
+
+            body:JSON.stringify(data)
+
+        });
+
+        const result = await response.json();
+
+        if(result.success){
+
+    document.querySelector(".container").style.display="none";
+
+    document.getElementById("queueCard").style.display="block";
+
+    document.getElementById("queueNumber").innerText=result.queue;
+
+    document.getElementById("cardName").innerText=result.name;
+
+    document.getElementById("cardDate").innerText=result.date;
+
+    document.getElementById("cardTime").innerText=result.time;
+
+
+}else{
+
+    alert("เกิดข้อผิดพลาด");
+
+}
+
+    }catch(error){
+
+        console.log(error);
+
+        alert("ไม่สามารถเชื่อมต่อระบบได้");
+
+    }
+
+}
+<script>
+
+const API_URL =
+"https://script.google.com/macros/s/......../exec";
+
+
+async function bookQueue(){
+
+    // โค้ดจองคิวทั้งหมด
+
+}
+
+
+// เพิ่มตรงนี้
+function printQueue(){
+
+    window.print();
+
+}
+
+
+function downloadPDF(){
+
+    const element=document.getElementById("queueCard");
+
+    html2pdf()
+    .from(element)
+    .save(
+    "Queue-"+document.getElementById("queueNumber").innerText+".pdf"
+    );
+
+}
+
+
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+</body>
+</html>
