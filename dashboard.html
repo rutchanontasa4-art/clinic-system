@@ -140,19 +140,45 @@
           return;
         }
 
-        data.forEach(item => {
-          tbody.innerHTML += `
-            <tr>
-              <td>${item.name || '-'}</td>
-              <td><span class="badge bg-secondary">${item.queue || '-'}</span></td>
-              <td>${item.overall || '-'}</td>
-              <td>${item.service || '-'}</td>
-              <td>${item.staff || '-'}</td>
-              <td>${item.cleanliness || '-'}</td>
-              <td>${item.comment || '-'}</td>
-            </tr>
-          `;
-        });
+  data.forEach(item => {
+
+  tbody.innerHTML += `
+
+    <tr>
+
+      <td>${item.name || '-'}</td>
+
+      <td>
+        <span class="badge bg-secondary">
+          ${item.queue || '-'}
+        </span>
+      </td>
+
+      <td>${item.overall || '-'}</td>
+
+      <td>${item.service || '-'}</td>
+
+      <td>${item.staff || '-'}</td>
+
+      <td>${item.cleanliness || '-'}</td>
+
+      <td>${item.comment || '-'}</td>
+
+      <td>
+        <button
+          class="btn btn-sm btn-danger"
+          onclick="deleteSatisfaction('${item.id}')">
+
+          ลบ
+
+        </button>
+      </td>
+
+    </tr>
+
+  `;
+
+});
       } catch (err) {
         tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger">เกิดข้อผิดพลาดในการดึงข้อมูล</td></tr>`;
       }
@@ -168,15 +194,25 @@
     }
 
     // ลบคิว
-    async function deleteBooking(id) {
-      if (confirm("คุณต้องการลบรายการนี้ใช่หรือไม่?")) {
-        await fetch(API_URL, {
-          method: "POST",
-          body: JSON.stringify({ action: "deleteBooking", id: id })
-        });
-        loadBookings();
-      }
+    async function deleteSatisfaction(id) {
+
+    if (!confirm("คุณต้องการลบแบบประเมินนี้ใช่หรือไม่?")) {
+        return;
     }
+
+    await fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify({
+            action: "deleteSatisfaction",
+            id: id
+        })
+    });
+
+    alert("ลบแบบประเมินเรียบร้อยแล้ว");
+
+    loadSatisfaction();
+
+}
   </script>
 </body>
 </html>
