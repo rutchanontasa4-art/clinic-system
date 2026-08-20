@@ -273,7 +273,6 @@ async function bookQueue() {
         return;
     }
 
-    // ปิดปุ่มกดชั่วคราวเพื่อป้องกันการกดซ้ำ
     submitBtn.disabled = true;
     submitBtn.innerText = "กำลังบันทึกข้อมูล...";
 
@@ -295,33 +294,53 @@ async function bookQueue() {
 
         const result = await response.json();
 
-       if (result.success) {
-    alert(
-        "🎉 จองคิวสำเร็จ!\n" +
-        "หมายเลขคิวของคุณคือ: " + (result.queue || "บันทึกแล้ว")
-    );
+        if (result.success) {
 
-    // รีเซ็ตค่าในฟอร์ม
-    document.getElementById("name").value = "";
-    document.getElementById("phone").value = "";
-    document.getElementById("email").value = "";
-    document.getElementById("symptom").value = "";
-    document.getElementById("date").value = "";
+            alert(
+                "🎉 จองคิวสำเร็จ!\n" +
+                "หมายเลขคิวของคุณคือ: " +
+                (result.queue || "บันทึกแล้ว")
+            );
 
-    // รีเซ็ตเวลา
-    document.getElementById("time").value = "";
-    document.getElementById("timeToggle").innerText = "เลือกเวลา ▼";
-    document.getElementById("timeList").classList.remove("show");
+            // ล้างข้อมูลผู้จอง
+            document.getElementById("name").value = "";
+            document.getElementById("phone").value = "";
+            document.getElementById("email").value = "";
+            document.getElementById("symptom").value = "";
 
-} else {
-    alert("❌ เกิดข้อผิดพลาด: " + (result.message || "จองคิวไม่สำเร็จ"));
-}
+            // ล้างเฉพาะเวลา
+            document.getElementById("time").value = "";
+            document.getElementById("timeToggle").innerText =
+                "เลือกเวลา ▼";
+
+            document.getElementById("timeList")
+                .classList.remove("show");
+
+            // โหลดสถานะเวลาของวันที่เดิมใหม่
+            await loadAvailableTimes();
+
+            // ปิดรายการเวลาอีกครั้ง
+            document.getElementById("timeList")
+                .classList.remove("show");
+
+        } else {
+
+            alert(
+                "❌ เกิดข้อผิดพลาด: " +
+                (result.message || "จองคิวไม่สำเร็จ")
+            );
+        }
 
     } catch (error) {
+
         console.error(error);
-        alert("❌ ไม่สามารถเชื่อมต่อกับระบบได้ กรุณาลองใหม่อีกครั้ง");
+
+        alert(
+            "❌ ไม่สามารถเชื่อมต่อกับระบบได้ กรุณาลองใหม่อีกครั้ง"
+        );
+
     } finally {
-        // คืนค่าปุ่มให้กดได้ปกติ
+
         submitBtn.disabled = false;
         submitBtn.innerText = "📝 จองคิว";
     }
