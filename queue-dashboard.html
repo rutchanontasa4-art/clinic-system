@@ -103,6 +103,20 @@ if (sessionStorage.getItem("adminLogin") !== "true") {
 ========================= */
 const API_URL = "https://script.google.com/macros/s/AKfycbw4N-c8P6tyoflEQ-O62G-G3mnskkmMW-BiZNkkt-LuVpwwznLkDtd3pahgME6FKCl2/exec";
 
+function formatTime(time) {
+    if (!time) return "-";
+
+    const text = String(time).trim();
+
+    const match = text.match(/(\d{1,2}):(\d{2})/);
+
+    if (match) {
+        return ("0" + match[1]).slice(-2) + ":" + match[2];
+    }
+
+    return text;
+}
+
 /* =========================
    3. โหลดข้อมูลรายการคิว
 ========================= */
@@ -140,7 +154,7 @@ async function loadBookings() {
                     <td>${item.phone || "-"}</td>
                     <td class="text-start">${item.symptom || "-"}</td>
                     <td>${item.date || "-"}</td>
-                    <td>${item.time || "-"} น.</td>
+                    <td>${formatTime(item.time)} น.</td>
                     <td>
                         <span class="badge ${badgeClass} status-badge">${statusText}</span>
                     </td>
