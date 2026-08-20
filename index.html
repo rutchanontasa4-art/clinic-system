@@ -121,6 +121,81 @@ footer {
     font-size: 14px;
     margin-top: 40px;
 }
+.time-section {
+    margin-bottom: 15px;
+}
+
+.time-label {
+    display: block;
+    color: #37474F;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.time-toggle {
+    background: #1976D2;
+    padding: 12px 15px;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.time-toggle:hover {
+    background: #0D47A1;
+}
+
+.time-list {
+    display: none;
+    background: #F8FAFC;
+    border: 1px solid #CFD8DC;
+    border-radius: 10px;
+    padding: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.time-list.show {
+    display: block;
+}
+
+.time-option {
+    width: 100%;
+    padding: 11px 14px;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    border: 1px solid #CFD8DC;
+    background: white;
+    color: #263238;
+    text-align: left;
+    font-size: 15px;
+}
+
+.time-option.available {
+    background: #E8F5E9;
+    border-color: #81C784;
+    color: #2E7D32;
+}
+
+.time-option.available:hover {
+    background: #C8E6C9;
+}
+
+.time-option.unavailable {
+    background: #FFEBEE;
+    border-color: #EF9A9A;
+    color: #C62828;
+    cursor: not-allowed;
+    opacity: .75;
+}
+
+.time-option.selected {
+    border: 2px solid #1976D2;
+    background: #E3F2FD;
+}
+
+.time-status {
+    float: right;
+    font-weight: bold;
+}
 </style>
 </head>
 
@@ -142,21 +217,24 @@ footer {
 
 <input type="date" id="date">
 
-<select id="time">
-    <option value="">-- เลือกเวลา --</option>
-    <option>09:00</option>
-    <option>10:00</option>
-    <option>11:00</option>
-    <option>12:00</option>
-    <option>13:00</option>
-    <option>14:00</option>
-    <option>15:00</option>
-    <option>16:00</option>
-    <option>17:00</option>
-    <option>18:00</option>
-    <option>19:00</option>
-    <option>20:00</option>
-</select>
+<!-- เลือกเวลา -->
+<div class="time-section">
+
+    <label class="time-label">🕐 เลือกเวลานัดหมาย</label>
+
+    <button
+        type="button"
+        id="timeToggle"
+        class="time-toggle"
+        onclick="toggleTimes()">
+        เลือกเวลา ▼
+    </button>
+
+    <div id="timeList" class="time-list"></div>
+
+    <input type="hidden" id="time">
+
+</div>
 
 <div class="button-group">
     <!-- ปุ่มจองคิว -->
@@ -245,6 +323,163 @@ async function bookQueue() {
         submitBtn.innerText = "📝 จองคิว";
     }
 }
+// ==========================================
+// เปิด / ปิดรายการเวลา
+// ==========================================
+function toggleTimes() {
+
+    const list = document.getElementById("timeList");
+
+    list.classList.toggle("show");
+
+}
+
+
+// ==========================================
+// โหลดเวลาว่าง / ไม่ว่าง
+// ==========================================
+async function loadAvailableTimes() {
+
+    const date = document.getElementById("date").value;
+
+    const list = document.getElementById("timeList");
+    const hiddenTime = document.getElementById("time");
+
+    hiddenTime.value = "";
+
+    document.getElementById("timeToggle").innerText =
+        "กำลังตรวจสอบเวลา...";
+
+    list.innerHTML = "";
+    list.classList.add("show");
+
+
+    if (!date) {
+
+        list.innerHTML =
+            '<div style="padding:12px;text-align:center;color:#78909C;">กรุณาเลือกวันที่ก่อน</div>';
+
+        document.getElementById("timeToggle").innerText =
+            "เลือกเวลา ▼";
+
+        return;
+
+    }
+
+
+    try {
+
+        const response = await fetch(
+            API_URL +
+            "?action=getAvailableTimes&date=" +
+            encodeURIComponent(date)
+        );
+
+        const times = await response.json();
+
+        list.innerHTML = "";
+
+
+        times.forEach(item => {
+
+            const button = document.createElement("button");
+
+            button.type = "button";
+
+            button.className =
+                "time-option " +
+                (item.available ? "available" : "unavailable");
+
+
+            const status =
+                item.available
+                    ? "🟢 ว่าง"
+                    : "🔴 ไม่ว่าง";
+
+
+            button.innerHTML =
+                "<strong>" + item.time + "</strong>" +
+                '<span class="time-status">' +
+                status +
+                "</span>";
+
+
+            if (item.available) {
+
+                button.onclick = function() {
+
+                    selectTime(item.time, button);
+
+                };
+
+            } else {
+
+                button.disabled = true;
+
+            }
+
+
+            list.appendChild(button);
+
+        });
+
+
+        document.getElementById("timeToggle").innerText =
+            "เลือกเวลา ▼";
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        list.innerHTML =
+            '<div style="padding:12px;text-align:center;color:#C62828;">ไม่สามารถตรวจสอบเวลาว่างได้</div>';
+
+        document.getElementById("timeToggle").innerText =
+            "เลือกเวลา ▼";
+
+    }
+
+}
+
+
+// ==========================================
+// เลือกเวลา
+// ==========================================
+function selectTime(time, button) {
+
+    document.getElementById("time").value = time;
+
+    document.getElementById("timeToggle").innerText =
+        "🕐 " + time + " ▼";
+
+
+    document.querySelectorAll(".time-option")
+        .forEach(btn => btn.classList.remove("selected"));
+
+
+    button.classList.add("selected");
+
+
+    document.getElementById("timeList")
+        .classList.remove("show");
+
+}
+
+
+// ==========================================
+// เมื่อเลือกวันที่
+// ==========================================
+document.getElementById("date").addEventListener(
+    "change",
+    function() {
+
+        document.getElementById("time").value = "";
+
+        loadAvailableTimes();
+
+    }
+);
 </script>
 
 </body>
