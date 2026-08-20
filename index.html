@@ -295,23 +295,27 @@ async function bookQueue() {
 
         const result = await response.json();
 
-        if (result.success) {
-            alert(
-                "🎉 จองคิวสำเร็จ!\n" +
-                "หมายเลขคิวของคุณคือ: " + (result.queue || "บันทึกแล้ว")
-            );
+       if (result.success) {
+    alert(
+        "🎉 จองคิวสำเร็จ!\n" +
+        "หมายเลขคิวของคุณคือ: " + (result.queue || "บันทึกแล้ว")
+    );
 
-            // รีเซ็ตค่าในฟอร์ม
-            document.getElementById("name").value = "";
-            document.getElementById("phone").value = "";
-            document.getElementById("email").value = "";
-            document.getElementById("symptom").value = "";
-            document.getElementById("date").value = "";
-            document.getElementById("time").selectedIndex = 0;
+    // รีเซ็ตค่าในฟอร์ม
+    document.getElementById("name").value = "";
+    document.getElementById("phone").value = "";
+    document.getElementById("email").value = "";
+    document.getElementById("symptom").value = "";
+    document.getElementById("date").value = "";
 
-        } else {
-            alert("❌ เกิดข้อผิดพลาด: " + (result.message || "จองคิวไม่สำเร็จ"));
-        }
+    // รีเซ็ตเวลา
+    document.getElementById("time").value = "";
+    document.getElementById("timeToggle").innerText = "เลือกเวลา ▼";
+    document.getElementById("timeList").classList.remove("show");
+
+} else {
+    alert("❌ เกิดข้อผิดพลาด: " + (result.message || "จองคิวไม่สำเร็จ"));
+}
 
     } catch (error) {
         console.error(error);
